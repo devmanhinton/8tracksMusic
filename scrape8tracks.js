@@ -3,7 +3,6 @@
 // hijack
 // Run this code
 
-
 function Download8tracks(className){
   this.elems=document.getElementsByClassName(className || 'youtube_link');
   this.urls=[];
@@ -12,6 +11,34 @@ function Download8tracks(className){
   this.grabbed=0;
   this.hijackRequest();
   this.saveAllUrls();
+}
+Download8tracks.prototype.8tracksSongPerPage='20';
+Download8tracks.prototype.requestAllTracks = function(cb){
+  var moreBtn=$('.more')[0],
+      numTracks=parseInt($('.favs_count').text()),
+      cbCalled=false, //For Backup
+      listener=function(){
+        numTracks--;
+        if(numTracks===20){
+          // cbCalled=true;
+          $(window).off('DOMNodeInserted',listener);
+          // cb();
+        }
+      },
+      href=moreBtn.href;
+
+  moreBtn.href=href.replace('20',numTracks).replace('2','1');
+
+  $(window).on('DOMNodeInserted',listener);
+  moreBtn.click();
+
+  setTimeout(function(){ //Backup
+    if(!cbCalled){
+      cbCalled=true;
+      $(window).off('DOMNodeInserted',listener);
+      cb();
+    }
+  }, 4000);
 }
 Download8tracks.prototype.dummyLocation = {};
 Download8tracks.prototype.hijackRequest = function(){
