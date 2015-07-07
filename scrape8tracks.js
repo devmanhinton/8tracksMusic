@@ -4,7 +4,7 @@
 // Run this code
 
 function Download8tracks(className){
-  this.elems=document.getElementsByClassName(className || 'youtube_link');
+  this.className=className||'youtube_link';
   this.urls=[];
   this.failures=[];
   this.grabbing=0;
@@ -69,6 +69,8 @@ Download8tracks.prototype.hijackRequest = function(){
   }
 }
 Download8tracks.prototype.saveAllUrls = function(cb,context){
+  this.elems=document.getElementsByClassName(this.className);
+
   for (var i=0;i<this.elems.length;i++) {
     this.grabUrl(this.elems[i]);
     this.grabbing++;
