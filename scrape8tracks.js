@@ -5,7 +5,8 @@
 
 function Download8tracks(className){
   this.className=className||'youtube_link';
-  this.urls=[];
+  this.videConversationSite='http://www.vidtomp3.com/';
+  this.youtubeIds=[];
   this.failures=[];
   this.grabbing=0;
   this.grabbed=0;
@@ -13,6 +14,7 @@ function Download8tracks(className){
   this.loadAllTracks(this.saveAllUrls,this);
 }
 Download8tracks.prototype.defaultSongsPerPage=20;
+Download8tracks.prototype.youtubeURLBase='http://www.youtube.com/v/ID';
 Download8tracks.prototype.loadAllTracks = function(cb,context){
   var moreBtn=$('.more')[0],
       numTracks=parseInt($('.favs_count').text()),
@@ -50,7 +52,7 @@ Download8tracks.prototype.hijackRequest = function(){
     this.grabbed++;
     if (json && json.items && json.items.length) {
       var youtubeId = json.items[0].id.videoId;
-      this.urls.push( "http://www.youtube.com/v/" + youtubeId + "?autoplay=1");
+      this.youtubeIds.push(youtubeId);
     } else {
       this.failures.push({json: json})
     }
@@ -82,4 +84,12 @@ Download8tracks.prototype.grabUrl = function(elem){
 }
 Download8tracks.prototype.finishedAprox = function(){
   return this.grabbing===this.grabbed;
+}
+Download8tracks.prototype.copyIds=function(){
+  window.prompt("Copy to clipboard: Ctrl+C, Enter", this.youtubeIds);
+}
+Download8tracks.prototype.downloadTrack = function(youtubeUrl) {
+
+
+
 }
