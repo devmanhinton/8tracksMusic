@@ -5,15 +5,39 @@
 
 alert && alert('working')
 
+Helper = {};
+
+Helper.injectScript = function(file, node) {
+    var th = document.getElementsByTagName(node)[0],
+        s = document.createElement('script');
+
+    s.setAttribute('type', 'text/javascript');
+    s.setAttribute('src', file);
+    s.id='pageJQuery';
+    th.appendChild(s);
+}
+
+Helper.loadJQuery = function(cb){
+  document.addEventListener('idReturned',function(evt){
+    debugger;
+  });
+  document.addEventListener('idNotReturned',function(evt){
+    debugger;
+  });
+  this.injectScript(chrome.extension.getURL('getJQuery.js'), 'body');
+}
+
 function Download8tracks(className){
-  this.className=className||'youtube_link';
-  this.videConversationSite='http://www.vidtomp3.com/';
-  this.youtubeIds=[];
-  this.failures=[];
-  this.grabbing=0;
-  this.grabbed=0;
-  this.hijackRequest();
-  this.loadAllTracks(this.saveAllUrls,this);
+  Helper.loadJQuery();
+
+  // this.className=className||'youtube_link';
+  // this.videConversationSite='http://www.vidtomp3.com/';
+  // this.youtubeIds=[];
+  // this.failures=[];
+  // this.grabbing=0;
+  // this.grabbed=0;
+  // this.hijackRequest();
+  // this.loadAllTracks(this.saveAllUrls,this);
 }
 Download8tracks.prototype.defaultSongsPerPage=20;
 Download8tracks.prototype.youtubeURLBase='http://www.youtube.com/v/ID';
