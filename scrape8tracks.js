@@ -3,6 +3,8 @@
 // hijack
 // Run this code
 
+alert && alert('working')
+
 function Download8tracks(className){
   this.className=className||'youtube_link';
   this.videConversationSite='http://www.vidtomp3.com/';
@@ -79,7 +81,6 @@ Download8tracks.prototype.saveAllUrls = function(cb,context){
   }
 }
 Download8tracks.prototype.grabUrl = function(elem){
-  console.log(elem);
   elem.click();
 }
 Download8tracks.prototype.finishedAprox = function(){
@@ -91,5 +92,5 @@ Download8tracks.prototype.copyIds=function(){
 Download8tracks.prototype.downloadTrack = function(youtubeUrl) {
 
 
-
 }
+var scraper=new Download8tracks();
