@@ -101,8 +101,26 @@ function Downloader(){
 }
 
 Downloader.prototype.download=function(ids){
-  debugger;
+  this.createSandbox();
 }
+
+Downloader.prototype.createSandbox=function(){
+  var self=this;
+  this.sandbox=$('<iframe />')[0];
+  this.sandbox.src=window.location.origin;
+  $(this.sandbox).appendTo('body');
+
+  this.sandbox.addEventListener('load',function(){
+    self;
+    debugger;
+  });
+}
+
+Downloader.prototype.$=function(args){
+  $(args.push(this.sandbox));
+}
+
+Downloader.prefix='__downloader';
 
 var scraper,
     downloader;
