@@ -17,31 +17,38 @@ Helper.injectScript = function(file, node) {
     th.appendChild(s);
 }
 
-Helper.loadJQuery = function(cb){
+Scraper.prototype.setupListeners = function(){
+  var self=this;
   document.addEventListener('idReturned',function(evt){
-    debugger;
+    self.ids.push(evt.detail);
+    self.finished++;
+    if(self.finished===self.total)
+      self.saveUrls();
   });
   document.addEventListener('idNotReturned',function(evt){
-    debugger;
+    self.finished++;
+    if(self.finished===self.total)
+      self.saveUrls();
   });
-  this.injectScript(chrome.extension.getURL('getJQuery.js'), 'body');
+  Helper.injectScript(chrome.extension.getURL('getJQuery.js'), 'body');
 }
 
-function Download8tracks(className){
-  Helper.loadJQuery();
-
-  // this.className=className||'youtube_link';
-  // this.videConversationSite='http://www.vidtomp3.com/';
-  // this.youtubeIds=[];
-  // this.failures=[];
-  // this.grabbing=0;
-  // this.grabbed=0;
-  // this.hijackRequest();
-  // this.loadAllTracks(this.saveAllUrls,this);
+Scraper.prototype.saveUrls = function(){
+  debugger;
 }
-Download8tracks.prototype.defaultSongsPerPage=20;
-Download8tracks.prototype.youtubeURLBase='http://www.youtube.com/v/ID';
-Download8tracks.prototype.loadAllTracks = function(cb,context){
+
+function Scraper(className){
+  this.ids=[];
+  this.finished=0;
+  this.className=className||'youtube_link';
+  this.videConversationSite='http://www.vidtomp3.com/';
+
+  this.setupListeners();
+  this.loadAllTracks(this.saveAllUrls,this);
+}
+Scraper.prototype.defaultSongsPerPage=20;
+Scraper.prototype.youtubeURLBase="http://www.youtube.com/v/";
+Scraper.prototype.loadAllTracks = function(cb,context){
   var moreBtn=$('.more')[0],
       numTracks=parseInt($('.favs_count').text()),
       cbCalled=false, //For Backup
@@ -68,53 +75,12 @@ Download8tracks.prototype.loadAllTracks = function(cb,context){
     }
   }, 4000);
 }
-Download8tracks.prototype.dummyLocation = {};
-Download8tracks.prototype.hijackRequest = function(){
-  window.open = function(){
-    return {location: this.dummyLocation}
-  }
-
-  var _8tracksCbAmended = function(json) {
-    this.grabbed++;
-    if (json && json.items && json.items.length) {
-      var youtubeId = json.items[0].id.videoId;
-      this.youtubeIds.push(youtubeId);
-    } else {
-      this.failures.push({json: json})
-    }
-  },
-  _ajax=$.ajax,
-  self=this;
-
-  $.ajax = function(argHsh) {
-    if(argHsh.url.match(/www.googleapis.com\/youtube\/v3\/search/)) {
-      argHsh.success=_8tracksCbAmended;
-      argHsh.context=self;
-      _ajax.apply($,[argHsh]);
-    } else {
-      _ajax.apply($,arguments);
-    }
-  }
-}
-Download8tracks.prototype.saveAllUrls = function(cb,context){
+Scraper.prototype.saveAllUrls = function(cb,context){
   this.elems=document.getElementsByClassName(this.className);
+  this.total=this.total=this.elems.length;
 
   for (var i=0;i<this.elems.length;i++) {
-    this.grabUrl(this.elems[i]);
-    this.grabbing++;
+    this.elems[i].click();
   }
 }
-Download8tracks.prototype.grabUrl = function(elem){
-  elem.click();
-}
-Download8tracks.prototype.finishedAprox = function(){
-  return this.grabbing===this.grabbed;
-}
-Download8tracks.prototype.copyIds=function(){
-  window.prompt("Copy to clipboard: Ctrl+C, Enter", this.youtubeIds);
-}
-Download8tracks.prototype.downloadTrack = function(youtubeUrl) {
-
-
-}
-var scraper=new Download8tracks();
+var scraper=new Scraper();
