@@ -27,3 +27,4 @@ $.ajax = function(argHsh) {
   }
 }
 
+// chrome.storage.sync.set({'mp3IDs': this.ids.join(' ')})

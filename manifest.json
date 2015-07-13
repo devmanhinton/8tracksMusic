@@ -7,7 +7,8 @@
   "web_accessible_resources" : ["getJQuery.js"],
   "content_scripts": [
     {
-      "matches": ["https://8tracks.com/*/favorite_tracks","http://8tracks.com/*/favorite_tracks"],
+      "matches": ["https://8tracks.com/*/favorite_tracks","http://8tracks.com/*/favorite_tracks",
+                  "https://www.vidtomp3.com/*","http://www.vidtomp3.com/*"],
       "js": ["jquery.js","scrape8tracks.js"]
     }
   ],
@@ -16,6 +17,7 @@
    "default_popup": "popup.html"
   },
   "permissions": [
-   "activeTab"
+     "activeTab",
+     "storage"
    ]
 }

@@ -4,6 +4,9 @@
 // Run this code
 
 alert && alert('working')
+YOUTUBE_BASE='http://www.youtube.com/v/';
+STORAGE_ID='mp3IDs';
+
 
 Helper = {};
 
@@ -34,7 +37,10 @@ Scraper.prototype.setupListeners = function(){
 }
 
 Scraper.prototype.saveUrls = function(){
-  debugger;
+  var data={};
+
+  data[STORAGE_ID]=this.ids.join(' ');
+  chrome.storage.sync.set(data);
 }
 
 function Scraper(className){
@@ -83,4 +89,28 @@ Scraper.prototype.saveAllUrls = function(cb,context){
     this.elems[i].click();
   }
 }
-var scraper=new Scraper();
+
+function Downloader(){
+  var self=this;
+  chrome.storage.sync.get(STORAGE_ID,function(data){
+    if(!data || !data[STORAGE_ID])
+      return // May be not ids to scrape
+
+    self.download(data[STORAGE_ID].split(' '));
+  });
+}
+
+Downloader.prototype.download=function(ids){
+  debugger;
+}
+
+var scraper,
+    downloader;
+
+if(window.location.origin.match('8tracks'))
+  scraper=new Scraper();
+else
+  downloader=new Downloader();
+
+
+//https://8tracks.com/*/favorite_tracks
