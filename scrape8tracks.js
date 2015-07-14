@@ -3,7 +3,6 @@
 // hijack
 // Run this code
 
-alert && alert('working')
 YOUTUBE_BASE='http://www.youtube.com/v/';
 STORAGE_ID='mp3IDs';
 
@@ -101,23 +100,51 @@ function Downloader(){
 }
 
 Downloader.prototype.download=function(ids){
-  this.createSandbox();
+  this.createSandboxThenDownload(ids);
 }
 
-Downloader.prototype.createSandbox=function(){
-  var self=this;
+Downloader.prototype.createSandboxThenDownload=function(ids){
+  var self=this,
+      afterLoad=function(){
+        self.sandbox.removeEventListener('load',afterLoad);
+        self.downloadTracks(ids);
+      }
   this.sandbox=$('<iframe />')[0];
   this.sandbox.src=window.location.origin;
   $(this.sandbox).appendTo('body');
 
-  this.sandbox.addEventListener('load',function(){
-    self;
-    debugger;
-  });
+  this.sandbox.addEventListener('load',afterLoad);
 }
 
-Downloader.prototype.$=function(args){
-  $(args.push(this.sandbox));
+Downloader.prototype.downloadTracks=function(ids){
+  var self=this,
+      maxAttempts=10,
+      downloadPage=function(evt){
+        self.sandbox.removeEventListener('load',downloadPage);
+        var downloadBtn=self.$('a[href*="download"]');
+        maxAttempts--;
+
+        if(!downloadbutton&&!maxAttempts){
+          console.log('unable to download track');
+          //Next Track
+        } else if (!downloadbutton) {
+          setTimeout(downloadPage,500);
+        }
+      },
+      inputPage=function(id){
+        var inputField=self.$('#url'),
+            nextPageBtn=self.$('#downloadbutton');
+
+        inputField.value=YOUTUBE_BASE+id;
+        nextPageBtn.click();
+        self.sandbox.addEventListener('load',downloadPage);
+      };
+
+      inputPage(ids[0]);
+}
+
+Downloader.prototype.$=function(selector){
+  return $(selector,this.sandbox.contentDocument);
 }
 
 Downloader.prefix='__downloader';
