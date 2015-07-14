@@ -118,24 +118,33 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
 
 Downloader.prototype.downloadTracks=function(ids){
   var self=this,
-      maxAttempts=10,
+      maxAttempts=20,
+      downloadPageTwo=function(evt){
+        self.sandbox.removeEventListener('load',downloadPageTwo);
+        var downloadBtn=self.$('#downloadmp3');
+        debugger;
+        downloadBtn.click();
+      }
       downloadPage=function(evt){
         self.sandbox.removeEventListener('load',downloadPage);
         var downloadBtn=self.$('a[href*="download"]');
         maxAttempts--;
 
-        if(!downloadbutton&&!maxAttempts){
+        if(!downloadBtn.length && !maxAttempts){
           console.log('unable to download track');
           //Next Track
-        } else if (!downloadbutton) {
-          setTimeout(downloadPage,500);
+        } else if (!downloadBtn.length) { //default is empty array
+          setTimeout(downloadPage,1000);
+        } else {
+          downloadBtn.click();
+          self.sandbox.addEventListener('load',downloadPageTwo);
         }
       },
       inputPage=function(id){
         var inputField=self.$('#url'),
             nextPageBtn=self.$('#downloadbutton');
 
-        inputField.value=YOUTUBE_BASE+id;
+        inputField.attr('value',YOUTUBE_BASE+id);
         nextPageBtn.click();
         self.sandbox.addEventListener('load',downloadPage);
       };
