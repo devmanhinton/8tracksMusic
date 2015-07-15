@@ -122,6 +122,10 @@ Downloader.prototype.downloadTracks=function(ids){
       downloadPageTwo=function(evt){
         self.sandbox.removeEventListener('load',downloadPageTwo);
         var downloadBtn=self.$('#downloadmp3');
+        // downloadBtn.get(0).onclick=function(){
+        //   debugger;
+        // }
+        self.hijackOpen();
         downloadBtn.click();
       }
       downloadPage=function(evt){
@@ -148,7 +152,6 @@ Downloader.prototype.downloadTracks=function(ids){
         self.sandbox.addEventListener('load',downloadPage);
       };
 
-      this.hijackOpen();
       inputPage(ids[0]);
 }
 
@@ -163,12 +166,13 @@ Downloader.prototype.hijackOpen=function(){
   var clicker=$('<button id="clickDownload"></button>'),
       self=this;
 
-  this.sandbox.contentWindow.open=function(){
+  var script=this.sandbox.contentDocument.createElement('script');
+  script.innerText='window.open=function(){alert("yo"); document.dispatchEvent(new CustomEvent("openCalled",{detail:arguments}))}'
+  this.sandbox.contentDocument.body.appendChild(script);
+
+  this.sandbox.contentDocument.addEventListener('openCalled',function(){
     debugger;
-  }
-  window.open=function(){
-    debugger;
-  }
+  });
 }
 
 Downloader.prefix='__downloader';
@@ -180,6 +184,9 @@ if(window.location.origin.match('8tracks'))
   scraper=new Scraper();
 else
   downloader=new Downloader();
+
+// $('iframe').each(function(num,iframe){console.log(iframe)})
+// $('iframe').each(function(num,iframe){console.log(iframe.contentWindow.open=function(){debugger})})
 
 
 //https://8tracks.com/*/favorite_tracks
