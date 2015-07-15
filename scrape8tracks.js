@@ -122,7 +122,6 @@ Downloader.prototype.downloadTracks=function(ids){
       downloadPageTwo=function(evt){
         self.sandbox.removeEventListener('load',downloadPageTwo);
         var downloadBtn=self.$('#downloadmp3');
-        debugger;
         downloadBtn.click();
       }
       downloadPage=function(evt){
@@ -136,7 +135,7 @@ Downloader.prototype.downloadTracks=function(ids){
         } else if (!downloadBtn.length) { //default is empty array
           setTimeout(downloadPage,1000);
         } else {
-          downloadBtn.click();
+          downloadBtn.get(0).click();
           self.sandbox.addEventListener('load',downloadPageTwo);
         }
       },
@@ -149,11 +148,27 @@ Downloader.prototype.downloadTracks=function(ids){
         self.sandbox.addEventListener('load',downloadPage);
       };
 
+      this.hijackOpen();
       inputPage(ids[0]);
 }
 
 Downloader.prototype.$=function(selector){
   return $(selector,this.sandbox.contentDocument);
+}
+
+Downloader.prototype.hijackOpen=function(){
+  if(!this.sandbox)
+    return;
+
+  var clicker=$('<button id="clickDownload"></button>'),
+      self=this;
+
+  this.sandbox.contentWindow.open=function(){
+    debugger;
+  }
+  window.open=function(){
+    debugger;
+  }
 }
 
 Downloader.prefix='__downloader';
