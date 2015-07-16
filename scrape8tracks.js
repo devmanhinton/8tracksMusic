@@ -5,6 +5,7 @@
 
 YOUTUBE_BASE='http://www.youtube.com/v/';
 STORAGE_ID='mp3IDs';
+URL_ID='download_urls'
 
 
 Helper = {};
@@ -119,7 +120,25 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
 }
 
 Downloader.prototype.afterDownload=function(){
+
+  var data={};
+
+  data[URL_ID]=this.downloadURLs.join(' ');
+  chrome.storage.sync.set(data);
+
   debugger;
+}
+
+Downloader.prototype.actuallyDownload=function(url){
+  if(!this.fakeButton) {
+    this.fakeButton=document.createElement('div');
+    document.body.appendChild(this.fakeButton);
+  }
+
+  this.fakeButton.onclick=function(){
+    window.open(url)
+  }
+  this.fakeButton.click()
 }
 
 Downloader.prototype.downloadTracks=function(ids){
@@ -128,7 +147,7 @@ Downloader.prototype.downloadTracks=function(ids){
       downloadUntilDone=function(){
         current++
         console.log('downloading track ' + current + ' out of ' + ids.length);
-        if(current<ids.length && current<5)
+        if(current<ids.length)
           self.refresh(function(){
             self.downloadTrack(ids[current],downloadUntilDone);
           });
@@ -185,7 +204,7 @@ Downloader.prototype.one=function(cb,id){
   inputField.attr('value',YOUTUBE_BASE+id);
   cb(nextPageBtn);
 }
-Downloader.prototype.two=function(cb){
+Downloader.prototype.two=function(cb,id){
   //debugger;
   var attempts=20,
       self=this,
@@ -214,6 +233,7 @@ Downloader.prototype.three=function(cb){
   this.hijackOpen(function(evt){
     var mp3URL=evt.detail[0];
     self.downloadURLs.push(mp3URL);
+    self.actuallyDownload(mp3URL);
     cb();
     //debugger;
   });
