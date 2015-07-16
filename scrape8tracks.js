@@ -91,6 +91,7 @@ Scraper.prototype.saveAllUrls = function(cb,context){
 
 function Downloader(){
   this.downloadURLs=[];
+  this.failedIds=[];
   var self=this;
   chrome.storage.sync.get(STORAGE_ID,function(data){
     if(!data || !data[STORAGE_ID])
@@ -106,7 +107,6 @@ Downloader.prototype.download=function(ids){
 
 Downloader.prototype.createSandboxThenDownload=function(ids){
   var self=this,
-      downloadURLs=[],
       afterLoad=function(){
         self.sandbox.removeEventListener('load',afterLoad);
         self.downloadTracks(ids);
@@ -118,17 +118,22 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
   this.sandbox.addEventListener('load',afterLoad);
 }
 
+Downloader.prototype.afterDownload=function(){
+  debugger;
+}
+
 Downloader.prototype.downloadTracks=function(ids){
   var current=-1,
       self=this,
       downloadUntilDone=function(){
         current++
+        console.log('downloading track ' + current + ' out of ' + ids.length);
         if(current<ids.length && current<5)
           self.refresh(function(){
             self.downloadTrack(ids[current],downloadUntilDone);
           });
         else
-          debugger
+          self.afterDownload();
       }
 
   this.nextTrack=downloadUntilDone;
@@ -156,11 +161,11 @@ Downloader.prototype.executePhase=function(on,id,cb,btn){
       afterLoad=function(){
         self.sandbox.removeEventListener('load',afterLoad);
         if(on===1)
-          self.one(id,cb);
+          self.one(cb,id);
         else if(on===2)
-          self.two(cb);
+          self.two(cb,id);
         else
-          self.three(cb);
+          self.three(cb,id);
       };
 
 
@@ -172,8 +177,8 @@ Downloader.prototype.executePhase=function(on,id,cb,btn){
   }
 }
 
-Downloader.prototype.one=function(id,cb){
-  debugger;
+Downloader.prototype.one=function(cb,id){
+  //debugger;
   var inputField=this.$('#url'),
       nextPageBtn=this.$('#downloadbutton');
 
@@ -181,7 +186,7 @@ Downloader.prototype.one=function(id,cb){
   cb(nextPageBtn);
 }
 Downloader.prototype.two=function(cb){
-  debugger;
+  //debugger;
   var attempts=20,
       self=this,
       attempt=function(){
@@ -194,14 +199,15 @@ Downloader.prototype.two=function(cb){
           cb(downloadBtn);
         } else {
           alert('failure');
-          this.nextTrack();
+          self.failedIds.push(id);
+          self.nextTrack();
         }
       };
 
     attempt();
 }
 Downloader.prototype.three=function(cb){
-  debugger;
+  //debugger;
   var downloadBtn=this.$('#downloadmp3'),
       self=this;
 
@@ -209,7 +215,7 @@ Downloader.prototype.three=function(cb){
     var mp3URL=evt.detail[0];
     self.downloadURLs.push(mp3URL);
     cb();
-    debugger;
+    //debugger;
   });
   downloadBtn.click();
 }
@@ -235,7 +241,7 @@ Downloader.prototype.hijackOpen=function(cb){
       self=this;
 
   var script=this.sandbox.contentDocument.createElement('script');
-  script.innerText='window.open=function(){alert("yo"); document.dispatchEvent(new CustomEvent("openCalled",{detail:arguments}))}'
+  script.innerText='window.open=function(){document.dispatchEvent(new CustomEvent("openCalled",{detail:arguments}))}'
   this.sandbox.contentDocument.body.appendChild(script);
 
   this.sandbox.contentDocument.addEventListener('openCalled',cb);
@@ -252,7 +258,7 @@ else
   downloader=new Downloader();
 
 // $('iframe').each(function(num,iframe){console.log(iframe)})
-// $('iframe').each(function(num,iframe){console.log(iframe.contentWindow.open=function(){debugger})})
+// $('iframe').each(function(num,iframe){console.log(iframe.contentWindow.open=function(){//debugger})})
 
 
 //https://8tracks.com/*/favorite_tracks
