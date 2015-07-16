@@ -106,6 +106,7 @@ Downloader.prototype.download=function(ids){
 
 Downloader.prototype.createSandboxThenDownload=function(ids){
   var self=this,
+      downloadURLs=[],
       afterLoad=function(){
         self.sandbox.removeEventListener('load',afterLoad);
         self.downloadTracks(ids);
@@ -118,7 +119,21 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
 }
 
 Downloader.prototype.downloadTracks=function(ids){
-  this.downloadTrack(ids[0]);
+  var current=-1,
+      self=this,
+      downloadUntilDone=function(){
+        current++
+        if(current<ids.length && current<5)
+          self.refresh(function(){
+            self.downloadTrack(ids[current],downloadUntilDone);
+          });
+        else
+          debugger
+      }
+
+  this.nextTrack=downloadUntilDone;
+
+  downloadUntilDone();
 }
 
 Downloader.prototype.downloadTrack=function(id,cb){
@@ -129,6 +144,8 @@ Downloader.prototype.downloadTrack=function(id,cb){
         on++;
         if(on<=total)
           self.executePhase(on,id,stepPhase,btn);
+        else
+          cb();
       };
 
   stepPhase();
@@ -165,7 +182,7 @@ Downloader.prototype.one=function(id,cb){
 }
 Downloader.prototype.two=function(cb){
   debugger;
-  var attempts=10,
+  var attempts=20,
       self=this,
       attempt=function(){
         attempts--;
@@ -177,6 +194,7 @@ Downloader.prototype.two=function(cb){
           cb(downloadBtn);
         } else {
           alert('failure');
+          this.nextTrack();
         }
       };
 
@@ -189,12 +207,20 @@ Downloader.prototype.three=function(cb){
 
   this.hijackOpen(function(evt){
     var mp3URL=evt.detail[0];
+    self.downloadURLs.push(mp3URL);
+    cb();
     debugger;
   });
   downloadBtn.click();
 }
-Downloader.prototype.refresh=function(){
-
+Downloader.prototype.refresh=function(cb){
+  var self=this,
+      afterLoad=function(){
+        self.sandbox.removeEventListener('load',afterLoad);
+        cb();
+      };
+  this.sandbox.contentWindow.location=window.location.origin;
+  this.sandbox.addEventListener('load',afterLoad);
 }
 
 Downloader.prototype.$=function(selector){
