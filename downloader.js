@@ -124,9 +124,10 @@ Downloader.prototype.pauseToDefeatCaptcha = function(captcha,cb,args){
   var $window=$(this.sandbox.contentWindow),
       self=this,
       watcher=function(evt){
-        if(evt.target.nodeName==='SCRIPT')
+        if(evt.target.nodeName==='SCRIPT') {
           debugger
-        else {
+        } else {
+          debugger;
           $window.off('DOMNodeInserted',watcher);
           self.sandbox.style.position="";
           cb.apply(self,args);
@@ -135,7 +136,8 @@ Downloader.prototype.pauseToDefeatCaptcha = function(captcha,cb,args){
 
   $window.on('DOMNodeInserted',watcher);
 
-  this.sandbox.style.height='115px'
+  this.sandbox.style.height='400px';
+  this.sandbox.style.width='500px';
   this.sandbox.style.position='fixed';
   this.sandbox.style.bottom=($(window).height()/2 - $(this.sandbox).height()/2) + "px";
   this.sandbox.style.right=($(window).width()/2 - $(this.sandbox).width()/2) + "px";
