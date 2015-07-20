@@ -4,12 +4,22 @@
 
 .downloaderContainer {
   width: 500px;
-  height: 600px;
+  height: 475px;
 
   position: fixed;
+  border: 5px solid red;
 }
 
 .downloaderContainer iframe {
   height: 400px;
-  width: 100%;
+  width: 99%;
+}
+
+.downloaderContainer button {
+  height: 75px;
+  width: 99%;
+
+  cursor: pointer;
+  background: white;
+  border-top: 2px solid red;
 }

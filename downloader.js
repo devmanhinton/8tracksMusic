@@ -30,9 +30,8 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
   this.sandbox.src=window.location.origin;
 
   $(this.sandbox).appendTo(this.container);
-  $(this.captchaBtn()).appendTo(this.container);
+  this.captchaBtn().appendTo(this.container);
   $(this.container).appendTo('body');
-  debugger;
 
   this.sandbox.addEventListener('load',afterLoad);
 }
@@ -130,25 +129,20 @@ Downloader.prototype.two=function(cb,id){
 Downloader.prototype.pauseToDefeatCaptcha = function(captcha,cb,args){
   var $window=$(this.sandbox.contentWindow),
       self=this,
-      watcher=function(evt){
-        if(evt.target.nodeName==='SCRIPT') {
-          debugger
-        } else {
-          debugger;
-          $window.off('DOMNodeInserted',watcher);
+      continueDownloads=function(){
+          self.captchaBtn().off('click',continueDownloads)
           self.hideContainer();
           cb.apply(self,args);
-        }
       };
 
-  $window.on('DOMNodeInserted',watcher);
+  this.captchaBtn().on('click',continueDownloads);
   this.showContainer();
   $window.scrollTop(captcha.offset().top);
 
   alert("To get all your tracks you need to verify you are human -- please click --I'm not a robot-- & then continue");
 }
 
-Downloader.prototype.showContainer = function(){
+Downloader.prototype.showContainer = function(){ // Prevent Scroll and set to size of captcha
   $(this.container).toggleClass('notShown');
   this.container.style.bottom=($(window).height()/2 - $(this.container).height()/2) + "px";
   this.container.style.right=($(window).width()/2 - $(this.container).width()/2) + "px";
@@ -161,10 +155,10 @@ Downloader.prototype.hideContainer = function(){
 Downloader.prototype.captchaBtn = function(){
   if(!this.button) {
     this.button=document.createElement('button');
-    this.button.textContent='Click After Confirming You Are Home';
+    this.button.textContent='Click this button after Confirming You Are Human';
   }
 
-  return this.button;
+  return $(this.button);
 }
 Downloader.prototype.three=function(cb){
   //debugger;
@@ -203,7 +197,7 @@ Downloader.prototype.afterDownload=function(){
 }
 
 Downloader.prototype.actuallyDownload=function(url){
-  return;
+  return; // For incremental development
   if(!this.fakeButton) {
     this.fakeButton=document.createElement('div');
     document.body.appendChild(this.fakeButton);
