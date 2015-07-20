@@ -9,6 +9,7 @@
     {
       "matches": ["https://8tracks.com/*/favorite_tracks","http://8tracks.com/*/favorite_tracks",
                   "https://www.vidtomp3.com/*","http://www.vidtomp3.com/*"],
+      "css": ["styles.css"],
       "js": ["jquery.js","globals.js","scraper.js","downloader.js","scrape8tracks.js"]
     }
   ],

@@ -1,0 +1,15 @@
+.notShown {
+  display: none;
+}
+
+.downloaderContainer {
+  width: 500px;
+  height: 600px;
+
+  position: fixed;
+}
+
+.downloaderContainer iframe {
+  height: 400px;
+  width: 100%;
+}

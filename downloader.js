@@ -23,9 +23,16 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
         self.downloadTracks(ids);
       };
 
+  this.container=document.createElement('div');
+  this.container.className="downloaderContainer notShown"
+
   this.sandbox=$('<iframe />')[0];
   this.sandbox.src=window.location.origin;
-  $(this.sandbox).appendTo('body');
+
+  $(this.sandbox).appendTo(this.container);
+  $(this.captchaBtn()).appendTo(this.container);
+  $(this.container).appendTo('body');
+  debugger;
 
   this.sandbox.addEventListener('load',afterLoad);
 }
@@ -129,20 +136,35 @@ Downloader.prototype.pauseToDefeatCaptcha = function(captcha,cb,args){
         } else {
           debugger;
           $window.off('DOMNodeInserted',watcher);
-          self.sandbox.style.position="";
+          self.hideContainer();
           cb.apply(self,args);
         }
       };
 
   $window.on('DOMNodeInserted',watcher);
-
-  this.sandbox.style.height='400px';
-  this.sandbox.style.width='500px';
-  this.sandbox.style.position='fixed';
-  this.sandbox.style.bottom=($(window).height()/2 - $(this.sandbox).height()/2) + "px";
-  this.sandbox.style.right=($(window).width()/2 - $(this.sandbox).width()/2) + "px";
+  this.showContainer();
   $window.scrollTop(captcha.offset().top);
+
   alert("To get all your tracks you need to verify you are human -- please click --I'm not a robot-- & then continue");
+}
+
+Downloader.prototype.showContainer = function(){
+  $(this.container).toggleClass('notShown');
+  this.container.style.bottom=($(window).height()/2 - $(this.container).height()/2) + "px";
+  this.container.style.right=($(window).width()/2 - $(this.container).width()/2) + "px";
+}
+
+Downloader.prototype.hideContainer = function(){
+  $(this.container).toggleClass('notShown');
+}
+
+Downloader.prototype.captchaBtn = function(){
+  if(!this.button) {
+    this.button=document.createElement('button');
+    this.button.textContent='Click After Confirming You Are Home';
+  }
+
+  return this.button;
 }
 Downloader.prototype.three=function(cb){
   //debugger;
