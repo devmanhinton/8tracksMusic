@@ -71,7 +71,7 @@ Downloader.prototype.downloadTrack=function(id,cb){
   stepPhase();
 }
 
-Downloader.prototype.executePhase=function(on,id,cb,btn){
+Downloader.prototype.executePhase=function(on,id,cb,btn,retry){
   var self=this,
       afterLoad=function(){
         self.sandbox.removeEventListener('load',afterLoad);
@@ -83,12 +83,16 @@ Downloader.prototype.executePhase=function(on,id,cb,btn){
           self.three(cb,id);
       };
 
-  if(on===1)
+  if(on===1||retry)
     afterLoad();
   else {
     btn.click();
     this.sandbox.addEventListener('load',afterLoad);
   }
+}
+
+Downloader.prototype.retryPhase=function(on,cb,id){
+  this.executePhase(on,id,cb,document.createElement('button'),true);
 }
 
 Downloader.prototype.one=function(cb,id){
@@ -109,7 +113,7 @@ Downloader.prototype.two=function(cb,id){
             googleFrame = self.$('.g-recaptcha');
 
         if(googleFrame.length) {
-          self.pauseToDefeatCaptcha(googleFrame,cb,[cb,id]);
+          self.pauseToDefeatCaptcha(googleFrame,2,cb,id);
           return // and wait for callback
         }
 
@@ -126,14 +130,13 @@ Downloader.prototype.two=function(cb,id){
     attempt();
 }
 
-Downloader.prototype.pauseToDefeatCaptcha = function(captcha,cb,args){
+Downloader.prototype.pauseToDefeatCaptcha = function(captcha,on,cb,id){
   var $window=$(this.sandbox.contentWindow),
       self=this,
       continueDownloads=function(){
-          debugger;
           self.captchaBtn().off('click',continueDownloads)
           self.hideContainer();
-          cb.apply(self,args);
+          self.retryPhase(on,cb,id); // Race - Hit button before captcha
       };
 
   this.captchaBtn().on('click',continueDownloads);
@@ -158,7 +161,7 @@ Downloader.prototype.hideContainer = function(){
 Downloader.prototype.captchaBtn = function(){
   if(!this.button) {
     this.button=document.createElement('button');
-    this.button.textContent='Click this button after Confirming You Are Human';
+    this.button.textContent='Confirm you are human above, then click this button';
   }
 
   return $(this.button);
