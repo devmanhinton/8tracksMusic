@@ -14,8 +14,6 @@ Downloader.prototype.$=function(selector){
   return $(selector,this.sandbox.contentDocument);
 }
 
-Downloader.prefix='__downloader';
-
 Downloader.prototype.createSandboxThenDownload=function(ids){
   var self=this,
       afterLoad=function(){
@@ -32,6 +30,9 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
   $(this.sandbox).appendTo(this.container);
   this.captchaBtn().appendTo(this.container);
   $(this.container).appendTo('body');
+
+  this.overlay=$('<div id="modalOverlay" class="notShown"></div>');
+  this.overlay.appendTo('body');
 
   this.sandbox.addEventListener('load',afterLoad);
 }
@@ -117,7 +118,6 @@ Downloader.prototype.two=function(cb,id){
         } else if (downloadBtn){
           cb(downloadBtn);
         } else {
-          alert('failure');
           self.failedIds.push(id);
           self.nextTrack();
         }
@@ -130,6 +130,7 @@ Downloader.prototype.pauseToDefeatCaptcha = function(captcha,cb,args){
   var $window=$(this.sandbox.contentWindow),
       self=this,
       continueDownloads=function(){
+          debugger;
           self.captchaBtn().off('click',continueDownloads)
           self.hideContainer();
           cb.apply(self,args);
@@ -144,12 +145,14 @@ Downloader.prototype.pauseToDefeatCaptcha = function(captcha,cb,args){
 
 Downloader.prototype.showContainer = function(){ // Prevent Scroll and set to size of captcha
   $(this.container).toggleClass('notShown');
+  this.overlay.toggleClass('notShown');
   this.container.style.bottom=($(window).height()/2 - $(this.container).height()/2) + "px";
   this.container.style.right=($(window).width()/2 - $(this.container).width()/2) + "px";
 }
 
 Downloader.prototype.hideContainer = function(){
   $(this.container).toggleClass('notShown');
+  this.overlay.toggleClass('notShown');
 }
 
 Downloader.prototype.captchaBtn = function(){
