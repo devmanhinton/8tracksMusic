@@ -11,13 +11,13 @@ function Downloader(){ // Disguse IP address of web request?
 }
 
 Downloader.prototype.$=function(selector){
-  return $(selector,this.sandbox.contentDocument);
+  return $(selector,this.sandbox.prop('contentDocument'));
 }
 
 Downloader.prototype.createSandboxThenDownload=function(ids){
   var self=this,
       afterLoad=function(){
-        self.sandbox.removeEventListener('load',afterLoad);
+        self.sandbox.off('load',afterLoad);
         self.downloadTracks(ids);
       };
 
@@ -33,8 +33,7 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
   this.overlay=$('<div id="modalOverlay" class="notShown"></div>');
   this.overlay.appendTo('body');
 
-  this.sandbox=this.sandbox.get(0)
-  this.sandbox.addEventListener('load',afterLoad);
+  this.sandbox.on('load',afterLoad);
 }
 
 Downloader.prototype.downloadTracks=function(ids){
@@ -74,7 +73,7 @@ Downloader.prototype.downloadTrack=function(id,cb){
 Downloader.prototype.executePhase=function(on,id,cb,btn,retry){
   var self=this,
       afterLoad=function(){
-        self.sandbox.removeEventListener('load',afterLoad);
+        self.sandbox.off('load',afterLoad);
         if(on===1)
           self.one(cb,id);
         else if(on===2)
@@ -87,7 +86,7 @@ Downloader.prototype.executePhase=function(on,id,cb,btn,retry){
     afterLoad();
   else {
     btn.click();
-    this.sandbox.addEventListener('load',afterLoad);
+    this.sandbox.on('load',afterLoad);
   }
 }
 
@@ -131,7 +130,7 @@ Downloader.prototype.two=function(cb,id){
 }
 
 Downloader.prototype.pauseToDefeatCaptcha = function(captcha,on,cb,id){
-  var $window=$(this.sandbox.contentWindow),
+  var $window=$(this.sandbox.prop('contentWindow')),
       self=this,
       continueDownloads=function(){
           self.captchaBtn().off('click',continueDownloads)
@@ -182,17 +181,18 @@ Downloader.prototype.three=function(cb){
 }
 
 Downloader.prototype.hijackOpen=function(cb){
-  if(!this.sandbox)
+  if(!this.sandbox.length)
     return;
 
   var clicker=$('<button id="clickDownload"></button>'),
-      self=this;
+      self=this,
+      doc=this.sandbox.prop('contentDocument');
 
-  var script=this.sandbox.contentDocument.createElement('script');
+  var script=doc.createElement('script');
   script.innerText='window.open=function(){document.dispatchEvent(new CustomEvent("openCalled",{detail:arguments}))}'
-  this.sandbox.contentDocument.body.appendChild(script);
+  doc.body.appendChild(script);
 
-  this.sandbox.contentDocument.addEventListener('openCalled',cb);
+  doc.addEventListener('openCalled',cb);
 }
 
 Downloader.prototype.afterDownload=function(){
@@ -217,9 +217,10 @@ Downloader.prototype.actuallyDownload=function(url){
 Downloader.prototype.refresh=function(cb){
   var self=this,
       afterLoad=function(){
-        self.sandbox.removeEventListener('load',afterLoad);
+        self.sandbox.off('load',afterLoad);
         cb();
       };
-  this.sandbox.contentWindow.location=window.location.origin;
-  this.sandbox.addEventListener('load',afterLoad);
+
+  this.sandbox.prop('contentWindow').location=window.location.origin;
+  this.sandbox.on('load',afterLoad);
 }
