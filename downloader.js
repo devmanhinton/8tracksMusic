@@ -1,4 +1,4 @@
-function Downloader(){
+function Downloader(){ // Disguse IP address of web request?
   this.downloadURLs=[];
   this.failedIds=[];
   var self=this;
@@ -21,19 +21,19 @@ Downloader.prototype.createSandboxThenDownload=function(ids){
         self.downloadTracks(ids);
       };
 
-  this.container=document.createElement('div');
-  this.container.className="downloaderContainer notShown"
+  this.container=$('<div class="downloaderContainer notShown"></div>');
 
-  this.sandbox=$('<iframe />')[0];
-  this.sandbox.src=window.location.origin;
+  this.sandbox=$('<iframe />');
+  this.sandbox.attr('src',window.location.origin);
 
-  $(this.sandbox).appendTo(this.container);
-  this.captchaBtn().appendTo(this.container);
-  $(this.container).appendTo('body');
+  this.sandbox.appendTo(this.container.get(0));
+  this.captchaBtn().appendTo(this.container.get(0));
+  this.container.appendTo('body');
 
   this.overlay=$('<div id="modalOverlay" class="notShown"></div>');
   this.overlay.appendTo('body');
 
+  this.sandbox=this.sandbox.get(0)
   this.sandbox.addEventListener('load',afterLoad);
 }
 
@@ -203,7 +203,6 @@ Downloader.prototype.afterDownload=function(){
 }
 
 Downloader.prototype.actuallyDownload=function(url){
-  return; // For incremental development
   if(!this.fakeButton) {
     this.fakeButton=document.createElement('div');
     document.body.appendChild(this.fakeButton);
