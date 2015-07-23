@@ -2,12 +2,11 @@
 <html>
   <head>
     <title>8tracks Downloader</title>
-    <script src="scrape8tracks.js"></script>
+    <script src="globals.js"></script>
     <script src="popup.js"></script>
   </head>
   <body>
-    <div>Enter Url for Favorite Tracks:</div>
-    <input id='8tracksUrl'></input>
-    <button id="checkPage">Go</button>
+    <div>Downloader is <span id="currentState"></span></div>
+    <button id="toggleButton">Turn it <span id="oppositeState"></span></button>
   </body>
 </html>

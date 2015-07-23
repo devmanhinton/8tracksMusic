@@ -1,6 +1,7 @@
 YOUTUBE_BASE='http://www.youtube.com/v/';
 STORAGE_ID='mp3IDs';
-URL_ID='download_urls'
+URL_ID='download_urls';
+SETTINGS='download_settings_8tracks';
 
 
 Helper = {};

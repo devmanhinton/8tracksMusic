@@ -1,29 +1,48 @@
-document.addEventListener('DOMContentLoaded', function() {
-  var checkPageButton = document.getElementById('checkPage');
+(function(){
+    document.addEventListener('DOMContentLoaded',function(){
+        var current_settings;
+        chrome.storage.sync.get(SETTINGS,function(data){
+            if(!data || !data[SETTINGS])
+                initSettingsFirst();
+            else {
+                console.log('on setup -- setting is: ' + data[SETTINGS].status);
+                current_settings=data[SETTINGS];
+                setUpPage();
+            }
+        });
 
-  checkPageButton.addEventListener('click', function() {
-    // var url=document.getElementById('8tracksUrl').value;
+        function initSettingsFirst(){ // Might want to look for error
+            var settings_obj={status: 'on'},
+                wrapper={};
 
-    chrome.tabs.getSelected(null,function(tab){
-      debugger;
+            console.log('starting the process and initing the data');
+
+            wrapper[SETTINGS]=settings_obj;
+
+            chrome.storage.sync.set(wrapper,function(){
+                current_settings=wrapper[SETTINGS];
+                setUpPage();
+            });
+        }
+
+        function setUpPage(){
+            document.getElementById('currentState').textContent=currentState();
+            document.getElementById('oppositeState').textContent=oppositeState();
+        }
+
+        function toggleSettings(){
+
+
+
+        }
+        function currentState(){
+            return current_settings.status;
+        }
+        function oppositeState(){
+            if(current_settings.status==='on')
+                return 'off';
+            else
+                return'on';
+        }
     });
-
-
-
-    // chrome.tabs.getSelected(null, function(tab) {
-    //   d = document;
-
-
-    //   // var f = d.createElement('form');
-    //   // f.action = 'http://gtmetrix.com/analyze.html?bm';
-    //   // f.method = 'post';
-    //   // var i = d.createElement('input');
-    //   // i.type = 'hidden';
-    //   // i.name = 'url';
-    //   // i.value = tab.url;
-    //   // f.appendChild(i);
-    //   // d.body.appendChild(f);
-    //   // f.submit();
-    // });
-  }, false);
-}, false);
+})();
