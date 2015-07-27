@@ -3,7 +3,6 @@ STORAGE_ID='mp3IDs';
 URL_ID='download_urls';
 SETTINGS='download_settings_8tracks';
 
-
 Helper = {};
 
 Helper.injectScript = function(file, node) {
