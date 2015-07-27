@@ -1,0 +1,22 @@
+This is a chrome plugin to download all your 'favorite' (ie., stared) tracks from 8tracks.
+
+Steps to use:
+
+a) Download and add
+b) Double check the plugin is turned out (click the icon)
+c) Go to your favorite tracks page on 8tracks
+
+Other useful facts:
+
+a) This extension will not unstar track - it fails silently on some tracks so you can use 
+your favorite list to double check
+b) There appears to be hard limit of ~170 tracks at a time. So, keep using in batches of 170 tracks or so
+, unstaring and leaving time in between.
+
+Pending issues:
+
+a) Catch when a track has no youtube link
+b) Tell the user when a track fails to download
+c) There seems to be hard download limit of 170 to fix
+
+Note: I have not actually checked the legality of this plugin. Thus this is meant for technical curosity.
