@@ -1,6 +1,8 @@
 // Case where there are no more tracks :)
 
 function Scraper(className){
+  console.log('starting to scrape track information. Will redirect on completion');
+
   this.ids=[];
   this.finished=0;
   this.className=className||'youtube_link';

@@ -28,8 +28,8 @@
         }
 
         function setUpDom(){
-            document.getElementById('currentState').textContent=currentState();
-            document.getElementById('oppositeState').textContent=oppositeState();
+            document.getElementById('currentState').textContent="'" + currentState() + "'";
+            document.getElementById('oppositeState').textContent="'" +  oppositeState() + "'";
         }
 
         function toggleSettings(cb){
