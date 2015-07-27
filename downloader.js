@@ -95,7 +95,6 @@ Downloader.prototype.retryPhase=function(on,cb,id){
 }
 
 Downloader.prototype.one=function(cb,id){
-  //debugger;
   var inputField=this.$('#url'),
       nextPageBtn=this.$('#downloadbutton');
 
@@ -103,7 +102,6 @@ Downloader.prototype.one=function(cb,id){
   cb(nextPageBtn);
 }
 Downloader.prototype.two=function(cb,id){
-  //debugger;
   var attempts=20,
       self=this,
       attempt=function(){
@@ -166,7 +164,6 @@ Downloader.prototype.captchaBtn = function(){
   return $(this.button);
 }
 Downloader.prototype.three=function(cb){
-  //debugger;
   var downloadBtn=this.$('#downloadmp3'),
       self=this;
 
@@ -175,7 +172,6 @@ Downloader.prototype.three=function(cb){
     self.downloadURLs.push(mp3URL);
     self.actuallyDownload(mp3URL);
     cb();
-    //debugger;
   });
   downloadBtn.click();
 }
